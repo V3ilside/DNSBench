@@ -1,0 +1,380 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Map old Tailwind colors to the new custom palette so existing React components adapt automatically */
+  --color-slate-950: #000000;
+  --color-slate-900: #0d0d12;
+  --color-slate-800: #111118;
+  --color-slate-700: #16161e;
+  --color-slate-600: #1e1e2a;
+
+  --color-indigo-300: #94b3f4;
+  --color-indigo-400: #5386ee;
+  --color-indigo-500: #3d46bc;
+  --color-indigo-600: #2b3286;
+  --color-indigo-700: #1a1e50;
+
+  --shadow-glow-violet: 0 0 20px 0 rgba(61, 70, 188, 0.18);
+  --shadow-glow-violet-sm: 0 0 10px 0 rgba(61, 70, 188, 0.12);
+  --shadow-glass: 0 4px 32px 0 rgba(0,0,0,0.50);
+  --shadow-glass-light: 0 2px 20px 0 rgba(0,0,0,0.06);
+
+  --animate-pulse-glow: pulse-glow 3s ease-in-out infinite;
+  --animate-fade-in: fade-in 0.25s ease-out forwards;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(61,70,188,0.20); }
+  50% { box-shadow: 0 0 0 1px rgba(61,70,188,0.45); }
+}
+
+@keyframes fade-in {
+  0% { opacity: 0; transform: translateY(4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Custom Properties ────────────────────────────────────────────────────── */
+:root {
+  --bg-primary:      #000000;
+  --bg-surface:      #0d0d12;
+  --bg-elevated:     #16161e;
+  --border-default:  rgba(61, 70, 188, 0.14);
+  --border-subtle:   rgba(255, 255, 255, 0.05);
+  --accent:          #3d46bc;
+  --accent-light:    #5386ee;
+  --text-primary:    #ffffff;
+  --text-secondary:  #a0a0b2;
+  --text-muted:      #505060;
+  --radius-panel:    12px;
+  --radius-card:     10px;
+  --radius-chip:     6px;
+}
+
+/* ── Light Mode Overrides ──────────────────────────────── */
+.light, [data-theme="light"] {
+  --bg-primary:     #ffffff;
+  --bg-surface:     #fafafd;
+  --bg-elevated:    #f0f0f5;
+  --border-default: rgba(61, 70, 188, 0.18);
+  --border-subtle:  rgba(0, 0, 0, 0.07);
+  --text-primary:   #000000;
+  --text-secondary: #555565;
+  --text-muted:     #a0a0b2;
+}
+
+/* ── Global Reset / Base ─────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.25s ease, color 0.2s ease;
+}
+
+code, pre, .font-mono {
+  font-family: var(--font-mono);
+}
+
+/* ── Noise texture overlay ───────────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* ── Glassmorphism Base ──────────────────────────────────────────────────── */
+.glass {
+  background: rgba(13, 13, 18, 0.80);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-card);
+  box-shadow: 0 4px 32px 0 rgba(0, 0, 0, 0.50);
+}
+
+.light .glass, [data-theme="light"] .glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* ── Metric/Number Ambient Glow ────────────────────────── */
+.metric-value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  text-shadow: 0 0 20px rgba(61, 70, 188, 0.20);
+  letter-spacing: -0.02em;
+}
+
+.light .metric-value, [data-theme="light"] .metric-value {
+  text-shadow: none;
+}
+
+/* ── Ghost Button Base ─────────────────────────────────── */
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: var(--radius-chip);
+  padding: 0.5rem 1.25rem;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.875rem;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: background 0.18s ease, box-shadow 0.18s ease, color 0.18s ease;
+}
+
+.btn-ghost:hover,
+.btn-ghost:focus-visible {
+  background: rgba(61, 70, 188, 0.08);
+  box-shadow: 0 0 14px 0 rgba(61, 70, 188, 0.18);
+  outline: none;
+}
+
+/* ── Input / Select Fields ─────────────────────────────── */
+input[type="text"],
+input[type="search"],
+input[type="url"],
+input[type="email"],
+select,
+textarea {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-chip);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  padding: 0.5rem 0.875rem;
+  font-size: 0.875rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(61, 70, 188, 0.12);
+}
+
+input::placeholder { color: var(--text-muted); }
+
+/* ── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+/* ── Selection ───────────────────────────────────────────────────────────── */
+::selection {
+  background: rgba(61, 70, 188, 0.22);
+  color: var(--text-primary);
+}
+
+/* ── Dividers ──────────────────────────────────────────── */
+hr, .divider {
+  border-color: var(--border-subtle);
+  opacity: 1;
+}
+
+/* ── Links ─────────────────────────────────────────────── */
+a:not([class]) {
+  color: var(--accent-light);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+a:not([class]):hover { color: var(--accent); }
+
+/* ── Status Badges ─────────────────────────────────────── */
+.badge-success { background: rgba(16,185,129,0.12); color: #10b981; border: 1px solid rgba(16,185,129,0.25); }
+.badge-warning { background: rgba(245,158,11,0.12); color: #f59e0b; border: 1px solid rgba(245,158,11,0.25); }
+.badge-danger  { background: rgba(244,63,94,0.12);  color: #f43f5e; border: 1px solid rgba(244,63,94,0.25); }
+.badge-active  { background: rgba(61,70,188,0.12);  color: #5386ee; border: 1px solid rgba(61,70,188,0.28); }
+.badge-success, .badge-warning, .badge-danger, .badge-active {
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ── Tabular numbers ─────────────────────────────────────────────────────── */
+.tabnum { font-variant-numeric: tabular-nums; }
+
+
+/* ═══════════════════════════════════════════════════════════
+   GLASS MODAL & POPUP SYSTEM
+   Target: all dialog/modal/popup/overlay patterns
+   Rule: additive CSS only — no HTML modified
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Backdrop / Scrim ──────────────────────────────────── */
+.modal-backdrop,
+.modal-overlay,
+.overlay-bg,
+dialog::backdrop,
+[data-backdrop],
+[class*="backdrop"] {
+  background-color: rgba(0, 0, 0, 0.65) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  transition: opacity 0.3s ease;
+}
+
+.light .modal-backdrop,
+.light dialog::backdrop,
+[data-theme="light"] .modal-backdrop {
+  background-color: rgba(255, 255, 255, 0.40) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+/* ─── Modal Window Surface ──────────────────────────────── */
+dialog,
+.modal,
+.modal-dialog,
+.modal-content,
+.popup,
+.popup-panel,
+.overlay-panel,
+[role="dialog"],
+.sheet,
+.drawer {
+  background: rgba(13, 13, 18, 0.95) !important;
+  backdrop-filter: blur(20px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+  border: 1px solid rgba(61, 70, 188, 0.25) !important;
+  border-radius: var(--radius-panel) !important;
+  box-shadow: 
+    0 24px 48px -12px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.02) inset,
+    0 0 30px 0 rgba(61, 70, 188, 0.10) !important;
+  color: var(--text-primary) !important;
+  font-family: 'Geist', sans-serif !important;
+  max-width: 90vw;
+}
+
+/* Light mode modal surface */
+.light dialog,
+.light .modal-content,
+[data-theme="light"] dialog,
+[data-theme="light"] .modal-content {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border: 1px solid rgba(61, 70, 188, 0.15) !important;
+  box-shadow: 
+    0 24px 48px -12px rgba(0, 0, 0, 0.15),
+    0 0 20px 0 rgba(61, 70, 188, 0.05) !important;
+  color: var(--text-primary) !important;
+}
+
+/* ─── Modal Header / Title ──────────────────────────────── */
+.modal-header,
+.modal-title,
+[class*="modal"][class*="title"],
+[class*="modal"][class*="header"] {
+  border-bottom: 1px solid var(--border-subtle) !important;
+  padding-bottom: 1rem !important;
+  margin-bottom: 1.5rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+  color: #ffffff !important;
+}
+
+.light .modal-header,
+.light .modal-title {
+  color: #000000 !important;
+}
+
+/* ─── Modal Close Button ────────────────────────────────── */
+.modal-close,
+.btn-close,
+[class*="close"][class*="btn"],
+[aria-label="Close"],
+[aria-label="close"] {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--text-muted) !important;
+  border-radius: var(--radius-chip) !important;
+  transition: all 0.2s ease !important;
+}
+
+.modal-close:hover,
+.btn-close:hover,
+[aria-label="Close"]:hover {
+  background: rgba(244, 63, 94, 0.1) !important; /* Subtle danger tint on hover */
+  color: #f43f5e !important;
+  border-color: rgba(244, 63, 94, 0.2) !important;
+}
+
+/* ─── Primary Action Buttons inside Modals ──────────────── */
+.modal-footer button.primary,
+.modal-footer button[type="submit"],
+dialog button.primary,
+[role="dialog"] button:not(.modal-close):not([class*="cancel"]):not([class*="secondary"]) {
+  background: var(--accent) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 0 15px 0 rgba(61, 70, 188, 0.4) !important;
+  border-radius: var(--radius-chip) !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+
+.modal-footer button.primary:hover,
+dialog button.primary:hover {
+  background: var(--accent-light) !important;
+  box-shadow: 0 0 20px 0 rgba(61, 70, 188, 0.6) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ─── Inputs inside Modals ──────────────────────────────── */
+.modal-body input,
+.modal-content textarea,
+dialog select {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid var(--border-subtle) !important;
+}
+
+.modal-body input:focus,
+.modal-content textarea:focus {
+  background: rgba(0, 0, 0, 0.5) !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px rgba(61, 70, 188, 0.2) !important;
+}
+
+.light .modal-body input {
+  background: rgba(0, 0, 0, 0.02) !important;
+}
+
+/* ─── Reduced Motion Override ───────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  dialog, .modal, .modal-backdrop, .overlay-bg {
+    transition: none !important;
+    backdrop-filter: none !important;
+    animation: none !important;
+  }
+}
